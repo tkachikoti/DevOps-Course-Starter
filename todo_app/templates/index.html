@@ -17,4 +17,23 @@
       </ul>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+        <form class="shadow p-3 mb-5 bg-body rounded" action="/add_todo_item" method="post">
+            <div class="row">
+                <p class="text-danger text-end fs-5">* required</p>
+            </div>
+            <div class="mb-3">
+                <label for="titleInput1" class="form-label">Title <span class="text-danger">*</span></label>
+                <input name="title" type="text" class="form-control" id="titleInput1" value="" required />
+            </div>
+            <div class="d-grid d-md-block mt-5">
+                <button type="submit" class="btn btn-primary btn-lg">ADD TODO ITEM</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-2"></div>
+</div>
 {% endblock %}
