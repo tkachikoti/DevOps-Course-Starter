@@ -2,9 +2,14 @@
 
 > If you are using GitPod for the project exercise (i.e. you cannot use your local machine) then you'll want to launch a VM using the [following link](https://gitpod.io/#https://github.com/CorndelWithSoftwire/DevOps-Course-Starter). Note this VM comes pre-setup with Python & Poetry pre-installed.
 
+## Table of contents
+
+- [System Requirements](#system-requirements)
+- [Dependencies](#dependencies)
+- [Running the App](#running-the-app)
 ## System Requirements
 
-The project uses poetry for Python to create an isolated environment and manage package dependencies. To prepare your system, ensure you have an official distribution of Python version 3.7+ and install Poetry using one of the following commands (as instructed by the [poetry documentation](https://python-poetry.org/docs/#system-requirements)):
+The project uses poetry for Python to create an isolated environment and manage package dependencies. To prepare your system, ensure you have an official distribution of [Python](https://www.python.org/downloads/) version 3.7+ and install Poetry using one of the following commands (as instructed by the [poetry documentation](https://python-poetry.org/docs/#system-requirements)):
 
 ### Poetry installation (Bash)
 
@@ -33,6 +38,8 @@ $ cp .env.template .env  # (first time only)
 ```
 
 The `.env` file is used by flask to set environment variables when running `flask run`. This enables things like development mode (which also enables features like hot reloading when you make a file change). There's also a [SECRET_KEY](https://flask.palletsprojects.com/en/1.1.x/config/#SECRET_KEY) variable which is used to encrypt the flask session cookie.
+
+The app relies on Trello to handle its to-do items and requires a Trello account, API key, and token to function. You will need to [create an account](https://trello.com/signup) on Trello, then generate an API key and token by following the [instructions here](https://developer.atlassian.com/cloud/trello/guides/rest-api/api-introduction/). After creating the API key and token, assign them in the corresponding variables in the newly made `.env`` file.
 
 ## Running the App
 
