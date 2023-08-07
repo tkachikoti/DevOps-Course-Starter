@@ -12,8 +12,8 @@ The following constants are used to configure the Trello board, lists, and authe
 - TRELLO_API_KEY: The API key for Trello
 - TRELLO_API_TOKEN: The API token for Trello
 - TRELLO_BOARD_ID: The ID of the Trello board to be used
-- TRELLO_TODO_LIST_ID: The ID of the to-do list on the Trello board
-- TRELLO_DONE_LIST_ID: The ID of the done list on the Trello board
+- TRELLO_NS_LIST_ID: The ID of the to-do list on the Trello board
+- TRELLO_COMPLETE_LIST_ID: The ID of the done list on the Trello board
 - TRELLO_API_BASE_URL: The base URL for the Trello API
 
 The module requires the requests library and expects the dotenv library to be used for loading environment variables containing the Trello API key and token.
@@ -30,8 +30,8 @@ TRELLO_API_KEY = os.getenv("TRELLO_API_KEY")
 TRELLO_API_TOKEN = os.getenv("TRELLO_API_TOKEN")
 
 TRELLO_BOARD_ID = "c1h21Oxp/"
-TRELLO_TODO_LIST_ID = "64ce4da9a7308596be1bd091"
-TRELLO_DONE_LIST_ID = "64ce4dbc20ab4eb16e1829f8"
+TRELLO_NS_LIST_ID = "64ce4da9a7308596be1bd091"
+TRELLO_COMPLETE_LIST_ID = "64ce4dbc20ab4eb16e1829f8"
 TRELLO_API_BASE_URL = "https://api.trello.com/1/"
 BOARDS_URL_PATH = "boards/"
 CARDS_URL_PATH = "cards/"
@@ -57,7 +57,7 @@ def translate_trello_card_to_item(trello_card):
     id_list = trello_card.get('idList')
 
     # Determine the status based on the list ID
-    status = 'Not Started' if id_list == TRELLO_TODO_LIST_ID else 'Done'
+    status = 'Not Started' if id_list == TRELLO_NS_LIST_ID else 'Complete'
 
     # Construct and return the item dictionary
     item = {
@@ -88,13 +88,12 @@ def get_items():
         
     return items
 
-def get_item(id, status):
+def get_item(id):
     """
     Fetches the saved item (card) with the specified ID from specified board.
 
     Args:
         id: The ID of the item.
-        status: The status of the item.
 
     Returns:
         item: The saved item, or None if no items match the specified ID.
@@ -122,7 +121,7 @@ def add_item(title):
     """
     # Prepare the payload with the Trello API key and token
     payload = create_base_payload()
-    payload['idList'] = TRELLO_TODO_LIST_ID
+    payload['idList'] = TRELLO_NS_LIST_ID
     payload['name'] = title
     r = requests.post(TRELLO_API_BASE_URL + CARDS_URL_PATH[:-1], params=payload)
     
@@ -154,7 +153,7 @@ def save_item(item):
     payload['name'] = item['title']
 
     # Determine the list ID based on the item's status
-    payload['idList'] = TRELLO_TODO_LIST_ID if item['status'] == 'Not Started' else TRELLO_DONE_LIST_ID
+    payload['idList'] = TRELLO_NS_LIST_ID if item['status'] == 'Not Started' else TRELLO_COMPLETE_LIST_ID
 
     # Send the PUT request to update the card
     r = requests.put(TRELLO_API_BASE_URL + CARDS_URL_PATH + item['id'], params=payload)
@@ -169,7 +168,25 @@ def save_item(item):
 
     return updated_item
 
-if __name__ == '__main__':
-    #get_items()
-    #get_item('64cfcab076d02235dff342d5', 'Not Started')
-    #add_item('Test item')
+def delete_item(id):
+    """
+    Deletes an existing item (card) with the specified ID from the Trello board.
+
+    Args:
+        id: The ID of the item to delete.
+
+    Returns:
+        bool: True if the deletion was successful, False otherwise.
+    """
+
+    # Prepare the payload with the Trello API key and token
+    payload = create_base_payload()
+
+    # Send the DELETE request to remove the card
+    r = requests.delete(TRELLO_API_BASE_URL + CARDS_URL_PATH + id, params=payload)
+
+    # Check if the request was successful (status code 200)
+    if r.status_code == requests.codes.ok:
+        return True
+    else:
+        return False
