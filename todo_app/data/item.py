@@ -83,6 +83,14 @@ class Item:
         """
         return self.status
 
+    def is_complete(self):
+        """Check if the item is marked as complete.
+
+        Returns:
+            bool: True if the item is complete, False otherwise.
+        """
+        return self.status == 'Complete'
+
     def mark_as_complete(self):
         """Mark the item as complete."""
         self.status = 'Complete'

@@ -20,20 +20,20 @@
                   </tr>
               </thead>
               <tbody>
-                  {% for element in list_of_items %}
-                    <tr {% if element.status == 'Complete' %}class="table-success"{% endif %}>
-                      <th scope="row">{{ element.title }}</th>
-                      <td class="wrap-table-text">{{ element.status }}</td>
+                  {% for item in list_of_items %}
+                    <tr {% if item.is_complete() %}class="table-success"{% endif %}>
+                      <th scope="row">{{ item.get_title() }}</th>
+                      <td class="wrap-table-text">{{ item.get_status() }}</td>
                       <td>
                         <div class="dropdown">
                           <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Open Action Menu</button>
                           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            {% if element.status == 'Not Started' %}
-                              <li><a class="dropdown-item" href="{{ url_for('mark_todo_item_complete', id=element.id) }}">Mark as 'Complete'</a></li>
+                            {% if item.is_complete() %}
+                              <li><a class="dropdown-item" href="{{ url_for('mark_todo_item_not_started', id=item.id) }}">Mark as 'Not Started'</a></li>
                             {% else %}
-                              <li><a class="dropdown-item" href="{{ url_for('mark_todo_item_not_started', id=element.id) }}">Mark as 'Not Started'</a></li>
+                              <li><a class="dropdown-item" href="{{ url_for('mark_todo_item_complete', id=item.id) }}">Mark as 'Complete'</a></li>
                             {% endif %}
-                            <li><a class="dropdown-item" href="{{ url_for('delete_todo_item', id=element.id) }}" onclick="confirm_deletion(event)">Delete Item</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('delete_todo_item', id=item.get_id()) }}" onclick="confirm_deletion(event)">Delete Item</a></li>
                           </ul>
                         </div>
                       </td>
