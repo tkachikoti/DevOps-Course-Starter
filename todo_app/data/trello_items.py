@@ -1,20 +1,26 @@
 """
-This module provides functions to interact with a Trello board for managing a to-do list. It includes the ability to:
+This module provides functions to interact with a Trello board for managing a
+to-do list. It includes the ability to:
 
 - Retrieve all to-do items (cards) from a specified Trello board
 - Fetch a specific item by its ID and status
 - Add a new item with a specified title to the to-do list on Trello
 - Update an existing item on Trello
 
-The module uses the Trello API to perform these actions, and it translates Trello cards into a specific item dictionary format, including the title, ID, and status.
+The module uses the Trello API to perform these actions, and it translates
+Trello cards into a specific item dictionary format, including the title,
+ID, and status.
 
-The following constants are used to configure the Trello board, lists, and authentication:
+The following constants are used to configure the Trello board, lists, and
+authentication:
 - TRELLO_API_KEY: The API key for Trello
 - TRELLO_API_TOKEN: The API token for Trello
 - TRELLO_BOARD_ID: The ID of the Trello board to be used
 - TRELLO_API_BASE_URL: The base URL for the Trello API
 
-The module requires the requests library and expects the dotenv library to be used for loading environment variables containing the Trello API key and token.
+The module requires the requests library and expects the dotenv library to be
+used for loading environment variables containing the Trello API key and
+token.
 """
 
 
@@ -26,6 +32,7 @@ from dotenv import load_dotenv
 from todo_app.data.item import Item
 
 load_dotenv()
+
 TRELLO_API_KEY = os.getenv("TRELLO_API_KEY")
 TRELLO_API_TOKEN = os.getenv("TRELLO_API_TOKEN")
 TRELLO_BOARD_ID = os.getenv("TRELLO_BOARD_ID")
@@ -48,7 +55,8 @@ def get_items():
     """
     # Prepare the payload with the Trello API key and token
     payload = create_base_payload()
-    r = requests.get(TRELLO_API_BASE_URL + BOARDS_URL_PATH + TRELLO_BOARD_ID + '/' + CARDS_URL_PATH[:-1], params=payload)
+    r = requests.get(TRELLO_API_BASE_URL + BOARDS_URL_PATH + TRELLO_BOARD_ID
+                     + '/' + CARDS_URL_PATH[:-1], params=payload)
 
     # Check if the request was successful and the response contains JSON data
     if r.status_code == requests.codes.ok and r.json():
