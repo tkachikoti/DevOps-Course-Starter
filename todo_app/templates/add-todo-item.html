@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css" integrity="sha512-34s5cpvaNG3BknEWSuOncX28vz97bRI59UnVtEEpFX536A7BtZSJHsDyFoCl8S7Dt2TPzcrCEoHBGeM4SUBDBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
+
+{% block title %}To-Do App{% endblock %}
+
+{% block content %}
+  <div class="jumbotron">
+    <h1 class="display-4">To-Do App - Add Item</h1>
+    <p class="lead">Just another to-do app.</p>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+        <form class="shadow p-3 mb-5 bg-body rounded" action="{{ url_for('add_todo_item') }}" method="post">
+            <div class="row">
+                <p class="text-danger text-end fs-5">* required</p>
+            </div>
+            <div class="mb-3">
+                <label for="titleInput1" class="form-label">Title <span class="text-danger">*</span></label>
+                <input name="title" type="text" class="form-control" id="titleInput1" value="" required />
+            </div>
+						<div class="mb-3">
+							<label for="descriptionInput1" class="form-label">Description</label>
+							<textarea name="description" class="form-control" id="descriptionInput1" rows="3"></textarea>
+						</div>
+						<div class="mb-3">
+							<label for="due-date1" class="form-label">Due Date</label>
+							<div class="input-group date" data-provide="datepicker">
+								<input name="due_date" id="due-date1" type="text" class="form-control">
+								<div class="input-group-addon">
+									<span class="glyphicon glyphicon-th"></span>
+								</div>
+							</div>
+						</div>
+            <div class="d-grid d-md-block mt-5">
+                <button type="submit" class="btn btn-primary btn-lg">ADD TODO ITEM</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-2"></div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js" integrity="sha512-LsnSViqQyaXpD4mBBdRYeP6sRwJiJveh2ZIbW41EBrNmKxgr/LFZIiWT6yr+nycvhvauz8c2nYMhrP80YhG7Cw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    function confirm_deletion(event) {
+			if (!window.confirm("Do you really want to delete this item?")) {
+				event.preventDefault();
+			}
+    }
+		$(document).ready(function(){
+			$('.input-group.date').datepicker({
+					format: 'yyyy-mm-dd'
+			});
+    });
+  </script>
+{% endblock %}
