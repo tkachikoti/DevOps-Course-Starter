@@ -12,8 +12,6 @@ The following constants are used to configure the Trello board, lists, and authe
 - TRELLO_API_KEY: The API key for Trello
 - TRELLO_API_TOKEN: The API token for Trello
 - TRELLO_BOARD_ID: The ID of the Trello board to be used
-- TRELLO_NS_LIST_ID: The ID of the to-do list on the Trello board
-- TRELLO_COMPLETE_LIST_ID: The ID of the done list on the Trello board
 - TRELLO_API_BASE_URL: The base URL for the Trello API
 
 The module requires the requests library and expects the dotenv library to be used for loading environment variables containing the Trello API key and token.
@@ -25,13 +23,13 @@ import os
 
 from dotenv import load_dotenv
 
+from todo_app.data.item import Item
+
 load_dotenv()
 TRELLO_API_KEY = os.getenv("TRELLO_API_KEY")
 TRELLO_API_TOKEN = os.getenv("TRELLO_API_TOKEN")
+TRELLO_BOARD_ID = os.getenv("TRELLO_BOARD_ID")
 
-TRELLO_BOARD_ID = "c1h21Oxp/"
-TRELLO_NS_LIST_ID = "64ce4da9a7308596be1bd091"
-TRELLO_COMPLETE_LIST_ID = "64ce4dbc20ab4eb16e1829f8"
 TRELLO_API_BASE_URL = "https://api.trello.com/1/"
 BOARDS_URL_PATH = "boards/"
 CARDS_URL_PATH = "cards/"
@@ -39,33 +37,6 @@ CARDS_URL_PATH = "cards/"
 
 def create_base_payload():
     return {"key": TRELLO_API_KEY, "token": TRELLO_API_TOKEN}
-
-def translate_trello_card_to_item(trello_card):
-    """
-    Translates a Trello card to an item dictionary as per the old structure.
-
-    Args:
-        trello_card (dict): The Trello card data.
-
-    Returns:
-        dict: The translated item.
-    """
-
-    # Extract the required fields from the Trello card
-    title = trello_card.get('name')
-    id = trello_card.get('id')
-    id_list = trello_card.get('idList')
-
-    # Determine the status based on the list ID
-    status = 'Not Started' if id_list == TRELLO_NS_LIST_ID else 'Complete'
-
-    # Construct and return the item dictionary
-    item = {
-        'id': id,
-        'title': title,
-        'status': status
-    }
-    return item
 
 def get_items():
     """
@@ -76,12 +47,12 @@ def get_items():
     """
     # Prepare the payload with the Trello API key and token
     payload = create_base_payload()
-    r = requests.get(TRELLO_API_BASE_URL + BOARDS_URL_PATH + TRELLO_BOARD_ID + CARDS_URL_PATH[:-1], params=payload)
+    r = requests.get(TRELLO_API_BASE_URL + BOARDS_URL_PATH + TRELLO_BOARD_ID + '/' + CARDS_URL_PATH[:-1], params=payload)
 
     # Check if the request was successful and the response contains JSON data
     if r.status_code == requests.codes.ok and r.json():
         trello_cards = r.json()
-        items = [translate_trello_card_to_item(card) for card in trello_cards]
+        items = [Item.translate_trello_card_to_item(card) for card in trello_cards]
     else:
         # Return an empty list if the response is unsuccessful or contains no data
         items = []
@@ -105,14 +76,14 @@ def get_item(id):
     # Check if the request was successful and the response contains JSON data
     if r.status_code == requests.codes.ok and r.json():
         trello_card = r.json()
-        item = translate_trello_card_to_item(trello_card)
+        item = Item.translate_trello_card_to_item(trello_card)
     else:
         # Return None if the response is unsuccessful or contains no data
         item = None
 
     return item
 
-def add_item(title):
+def add_item(item):
     """
     Adds a new item (card) with the specified title to the to-do list.
 
@@ -121,14 +92,14 @@ def add_item(title):
     """
     # Prepare the payload with the Trello API key and token
     payload = create_base_payload()
-    payload['idList'] = TRELLO_NS_LIST_ID
-    payload['name'] = title
+    payload['idList'] = item.get_id_list()
+    payload['name'] = item.get_title()
     r = requests.post(TRELLO_API_BASE_URL + CARDS_URL_PATH[:-1], params=payload)
     
     # Check if the request was successful and the response contains JSON data
     if r.status_code == requests.codes.ok and r.json():
         trello_card = r.json()
-        item = translate_trello_card_to_item(trello_card)
+        item = Item.translate_trello_card_to_item(trello_card)
     else:
         # Return None if the response is unsuccessful or contains no data
         item = None
@@ -149,19 +120,17 @@ def save_item(item):
     # Prepare the payload with the Trello API key and token
     payload = create_base_payload()
 
-    # Update the name (title) of the card
-    payload['name'] = item['title']
-
-    # Determine the list ID based on the item's status
-    payload['idList'] = TRELLO_NS_LIST_ID if item['status'] == 'Not Started' else TRELLO_COMPLETE_LIST_ID
+    # Update card
+    payload['name'] = item.get_title()
+    payload['idList'] = item.get_id_list()
 
     # Send the PUT request to update the card
-    r = requests.put(TRELLO_API_BASE_URL + CARDS_URL_PATH + item['id'], params=payload)
+    r = requests.put(TRELLO_API_BASE_URL + CARDS_URL_PATH + item.get_id(), params=payload)
 
     # Check if the request was successful and the response contains JSON data
     if r.status_code == requests.codes.ok and r.json():
         trello_card = r.json()
-        updated_item = translate_trello_card_to_item(trello_card)
+        updated_item = Item.translate_trello_card_to_item(trello_card)
     else:
         # Return None if the response is unsuccessful or contains no data
         updated_item = None
