@@ -53,7 +53,8 @@ class Item:
 
         return cls(title, id, id_list, description, due_date, status)
 
-    def get_id(self):
+    @property
+    def id(self):
         """
         Returns the id of the item.
 
@@ -62,7 +63,8 @@ class Item:
         """
         return self.id
 
-    def get_id_list(self):
+    @property
+    def id_list(self):
         """
         Returns the list id that the item belongs to.
 
@@ -71,7 +73,8 @@ class Item:
         """
         return self.id_list
 
-    def get_description(self):
+    @property
+    def description(self):
         """
         Returns the item description.
 
@@ -80,7 +83,13 @@ class Item:
         """
         return self.description
 
-    def get_due_date(self):
+    @description.setter
+    def description(self, new_description):
+        """Update the description of the item."""
+        self.title = new_description
+
+    @property
+    def due_date(self):
         """
         Returns the item due date.
 
@@ -89,7 +98,13 @@ class Item:
         """
         return self.due_date
 
-    def get_title(self):
+    @due_date.setter
+    def due_date(self, new_due_date):
+        """Update the due date of the item."""
+        self.title = new_due_date
+
+    @property
+    def title(self):
         """
         Returns the title of the item.
 
@@ -98,7 +113,13 @@ class Item:
         """
         return self.title
 
-    def get_status(self):
+    @title.setter
+    def title(self, new_title):
+        """Update the title of the item with the new title."""
+        self.title = new_title
+
+    @property
+    def status(self):
         """
         Returns the status of the item.
 
@@ -124,18 +145,6 @@ class Item:
         """Mark the item as not started."""
         self.status = 'Not Started'
         self.id_list = TRELLO_NS_LIST_ID
-
-    def update_title(self, new_title):
-        """Update the title of the item with the new title."""
-        self.title = new_title
-
-    def update_description(self, new_description):
-        """Update the description of the item."""
-        self.title = new_description
-
-    def update_due(self, new_due_date):
-        """Update the due date of the item."""
-        self.title = new_due_date
 
     def __str__(self):
         """Return a string representation of the item."""
