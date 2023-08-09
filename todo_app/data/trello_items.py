@@ -63,7 +63,8 @@ def get_items():
         trello_cards = r.json()
         items = [Item.translate_trello_card_to_item(card) for card in trello_cards]
     else:
-        # Return an empty list if the response is unsuccessful or contains no data
+        # Return an empty list if the response is unsuccessful or contains
+        # no data
         items = []
 
     return items
@@ -103,10 +104,10 @@ def add_item(item):
     """
     # Prepare the payload with the Trello API key and token
     payload = create_base_payload()
-    payload['idList'] = item.get_id_list()
-    payload['name'] = item.get_title()
-    payload['desc'] = item.get_description()
-    payload['due'] = item.get_due_date()
+    payload['idList'] = item.id_list
+    payload['name'] = item.title
+    payload['desc'] = item.description
+    payload['due'] = item.due_date
     r = requests.post(TRELLO_API_BASE_URL + CARDS_URL_PATH[:-1],
                       params=payload)
 
@@ -136,11 +137,11 @@ def save_item(item):
     payload = create_base_payload()
 
     # Update card
-    payload['name'] = item.get_title()
-    payload['idList'] = item.get_id_list()
+    payload['name'] = item.title
+    payload['idList'] = item.id_list
 
     # Send the PUT request to update the card
-    r = requests.put(TRELLO_API_BASE_URL + CARDS_URL_PATH + item.get_id(), params=payload)
+    r = requests.put(TRELLO_API_BASE_URL + CARDS_URL_PATH + item.id, params=payload)
 
     # Check if the request was successful and the response contains JSON data
     if r.status_code == requests.codes.ok and r.json():
