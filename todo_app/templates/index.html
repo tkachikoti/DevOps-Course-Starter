@@ -52,9 +52,9 @@
               <tbody>
                   {% for item in list_of_items %}
                     <tr {% if item.is_complete() %}class="table-success"{% endif %}>
-                      <th scope="row">{{ item.get_title() }}</th>
-                      <td class="wrap-table-text">{{ item.get_status() }}</td>
-                      <td class="wrap-table-text">{{ item.get_due_date() }}</td>
+                      <th scope="row">{{ item.title }}</th>
+                      <td class="wrap-table-text">{{ item.status }}</td>
+                      <td class="wrap-table-text">{{ item.due_date }}</td>
                       <td>
                         <div class="dropdown">
                           <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Open Action Menu</button>
@@ -64,7 +64,7 @@
                             {% else %}
                               <li><a class="dropdown-item" href="{{ url_for('mark_todo_item_complete', id=item.id) }}">Mark as 'Complete'</a></li>
                             {% endif %}
-                            <li><a class="dropdown-item" href="{{ url_for('delete_todo_item', id=item.get_id()) }}" onclick="confirm_deletion(event)">Delete Item</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('delete_todo_item', id=item.id) }}" onclick="confirm_deletion(event)">Delete Item</a></li>
                           </ul>
                         </div>
                       </td>
