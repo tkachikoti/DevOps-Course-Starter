@@ -17,25 +17,26 @@ authentication:
 - TRELLO_API_TOKEN: The API token for Trello
 - TRELLO_BOARD_ID: The ID of the Trello board to be used
 - TRELLO_API_BASE_URL: The base URL for the Trello API
-
-The module requires the requests library and expects the dotenv library to be
-used for loading environment variables containing the Trello API key and
-token.
 """
 
 
 import requests
 import os
 
-from dotenv import load_dotenv
-
 from todo_app.data.item import Item
 
-load_dotenv()
 
-TRELLO_API_KEY = os.getenv("TRELLO_API_KEY")
-TRELLO_API_TOKEN = os.getenv("TRELLO_API_TOKEN")
-TRELLO_BOARD_ID = os.getenv("TRELLO_BOARD_ID")
+def TRELLO_API_KEY():
+    return os.getenv("TRELLO_API_KEY")
+
+
+def TRELLO_API_TOKEN():
+    return os.getenv("TRELLO_API_TOKEN")
+
+
+def TRELLO_BOARD_ID():
+    return os.getenv("TRELLO_BOARD_ID")
+
 
 TRELLO_API_BASE_URL = "https://api.trello.com/1/"
 BOARDS_URL_PATH = "boards/"
@@ -43,7 +44,7 @@ CARDS_URL_PATH = "cards/"
 
 
 def create_base_payload():
-    return {"key": TRELLO_API_KEY, "token": TRELLO_API_TOKEN}
+    return {"key": TRELLO_API_KEY(), "token": TRELLO_API_TOKEN()}
 
 
 def get_items():
@@ -55,7 +56,7 @@ def get_items():
     """
     # Prepare the payload with the Trello API key and token
     payload = create_base_payload()
-    r = requests.get(TRELLO_API_BASE_URL + BOARDS_URL_PATH + TRELLO_BOARD_ID
+    r = requests.get(TRELLO_API_BASE_URL + BOARDS_URL_PATH + TRELLO_BOARD_ID()
                      + '/' + CARDS_URL_PATH[:-1], params=payload)
 
     # Check if the request was successful and the response contains JSON data
