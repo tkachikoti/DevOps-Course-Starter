@@ -26,7 +26,7 @@ def index():
         sort_options=sort_options,
         list_of_items=sorted(
             get_items(),
-            key=lambda item: getattr(item, f'get_{sort_by}')(),
+            key=lambda item: getattr(item, sort_by),
             reverse=order_by_descending)
     )
 
@@ -50,19 +50,29 @@ def delete_todo_item(id):
     return redirect(url_for('index'))
 
 
-@app.route('/complete-item/<id>', methods=['GET'])
-def mark_todo_item_complete(id):
-    item = get_item(id)
-    if item:
-        item.mark_as_complete()
-        save_item(item)
-    return redirect(url_for('index'))
-
-
 @app.route('/not-started-item/<id>', methods=['GET'])
 def mark_todo_item_not_started(id):
     item = get_item(id)
     if item:
-        item.mark_as_not_started()
+        item.mark_as_to_do()
         save_item(item)
     return redirect(url_for('index'))
+
+
+@app.route('/in-progress-item/<id>', methods=['GET'])
+def mark_todo_item_in_progress(id):
+    item = get_item(id)
+    if item:
+        item.mark_as_doing()
+        save_item(item)
+    return redirect(url_for('index'))
+
+
+@app.route('/complete-item/<id>', methods=['GET'])
+def mark_todo_item_complete(id):
+    item = get_item(id)
+    if item:
+        item.mark_as_done()
+        save_item(item)
+    return redirect(url_for('index'))
+

@@ -54,15 +54,19 @@ def get_items():
     Returns:
         list: The list of items from board.
     """
+
     # Prepare the payload with the Trello API key and token
     payload = create_base_payload()
-    r = requests.get(TRELLO_API_BASE_URL + BOARDS_URL_PATH + TRELLO_BOARD_ID()
-                     + '/' + CARDS_URL_PATH[:-1], params=payload)
+    url = (TRELLO_API_BASE_URL + BOARDS_URL_PATH + TRELLO_BOARD_ID() +
+           '/' + CARDS_URL_PATH[:-1])
+    r = requests.get(url, params=payload)
 
     # Check if the request was successful and the response contains JSON data
     if r.status_code == requests.codes.ok and r.json():
         trello_cards = r.json()
-        items = [Item.translate_trello_card_to_item(card) for card in trello_cards]
+        items = [
+            Item.translate_trello_card_to_item(card) for card in trello_cards
+        ]
     else:
         # Return an empty list if the response is unsuccessful or contains
         # no data
@@ -83,7 +87,8 @@ def get_item(id):
     """
     # Prepare the payload with the Trello API key and token
     payload = create_base_payload()
-    r = requests.get(TRELLO_API_BASE_URL + CARDS_URL_PATH + id, params=payload)
+    url = TRELLO_API_BASE_URL + CARDS_URL_PATH + id
+    r = requests.get(url, params=payload)
 
     # Check if the request was successful and the response contains JSON data
     if r.status_code == requests.codes.ok and r.json():
@@ -109,8 +114,9 @@ def add_item(item):
     payload['name'] = item.title
     payload['desc'] = item.description
     payload['due'] = item.due_date
-    r = requests.post(TRELLO_API_BASE_URL + CARDS_URL_PATH[:-1],
-                      params=payload)
+
+    url = TRELLO_API_BASE_URL + CARDS_URL_PATH[:-1]
+    r = requests.post(url, params=payload)
 
     # Check if the request was successful and the response contains JSON data
     if r.status_code == requests.codes.ok and r.json():
@@ -142,7 +148,8 @@ def save_item(item):
     payload['idList'] = item.id_list
 
     # Send the PUT request to update the card
-    r = requests.put(TRELLO_API_BASE_URL + CARDS_URL_PATH + item.id, params=payload)
+    url = TRELLO_API_BASE_URL + CARDS_URL_PATH + item.id
+    r = requests.put(url, params=payload)
 
     # Check if the request was successful and the response contains JSON data
     if r.status_code == requests.codes.ok and r.json():
@@ -171,8 +178,8 @@ def delete_item(id):
     payload = create_base_payload()
 
     # Send the DELETE request to remove the card
-    r = requests.delete(TRELLO_API_BASE_URL + CARDS_URL_PATH + id,
-                        params=payload)
+    url = TRELLO_API_BASE_URL + CARDS_URL_PATH + id
+    r = requests.delete(url, params=payload)
 
     # Check if the request was successful (status code 200)
     if r.status_code == requests.codes.ok:

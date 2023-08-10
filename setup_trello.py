@@ -33,9 +33,10 @@ def update_env_file():
     response = requests.get(lists_url)
     lists = response.json()
 
-    # Assuming the lists have specific names for "Not Started" and "Complete"
-    trello_ns_list_id = next(list_['id'] for list_ in lists if list_['name'] == 'Not Started')
-    trello_complete_list_id = next(list_['id'] for list_ in lists if list_['name'] == 'Complete')
+    # Assuming the lists have specific names for "To Do", "Doing" and "Done"
+    trello_todo_list_id = next(list_['id'] for list_ in lists if list_['name'] == 'To Do')
+    trello_doing_list_id = next(list_['id'] for list_ in lists if list_['name'] == 'Doing')
+    trello_done_list_id = next(list_['id'] for list_ in lists if list_['name'] == 'Done')
 
     # Path to the .env file
     env_file_path = '.env'
@@ -47,10 +48,12 @@ def update_env_file():
     # Modify the content with the new values
     new_content = []
     for line in env_content:
-        if 'TRELLO_NS_LIST_ID' in line:
-            line = f"TRELLO_NS_LIST_ID={trello_ns_list_id}\n"
-        elif 'TRELLO_COMPLETE_LIST_ID' in line:
-            line = f"TRELLO_COMPLETE_LIST_ID={trello_complete_list_id}\n"
+        if 'TRELLO_TODO_LIST_ID' in line:
+            line = f"TRELLO_TODO_LIST_ID={trello_todo_list_id}\n"
+        elif 'TRELLO_DOING_LIST_ID' in line:
+            line = f"TRELLO_DOING_LIST_ID={trello_doing_list_id}\n"
+        elif 'TRELLO_DONE_LIST_ID' in line:
+            line = f"TRELLO_DONE_LIST_ID={trello_done_list_id}\n"
         new_content.append(line)
 
     # Write the modified content back to the .env file

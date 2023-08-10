@@ -47,7 +47,7 @@ The app relies on Trello to handle its to-do items and requires a Trello account
 ### Setting up Trello Board and List IDs
 
 1. Open the Trello board you want to use to persist your data.
-2. Create two lists, one named `Not Started` and the other named `Complete`.
+2. Create three lists, one named `To Do`, another named `Doing` and the other named `Done`.
 3. In the URL, you'll see a string like https://trello.com/b/xxxxxxx/board-name. The sequence of characters where the xxxxxxx is located is the board's short ID.
 4. Copy the board's short ID and assign it to the `TRELLO_BOARD_ID` variable in the newly made `.env` file.
 5. Run the `trello_setup.py` script to configure other Trello-related variables in the `.env` file.
