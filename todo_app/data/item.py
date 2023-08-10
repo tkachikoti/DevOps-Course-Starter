@@ -19,14 +19,13 @@ TRELLO_COMPLETE_LIST_ID = os.getenv("TRELLO_COMPLETE_LIST_ID")
 
 class Item:
     def __init__(self, title, id=None, id_list=TRELLO_NS_LIST_ID,
-                 description=None, due_date=None, status='Not Started'):
+                 description=None, due_date=None):
         """Initialize a new Item with the given ID, title, and status."""
         self.title = title
         self.id = id
         self.id_list = id_list
         self.description = description
         self.due_date = due_date
-        self.status = status
 
     @classmethod
     def translate_trello_card_to_item(cls, trello_card):
@@ -48,10 +47,7 @@ class Item:
         description = trello_card.get('desc')
         due_date = trello_card.get('due')
 
-        # Determine status based on the list ID
-        status = 'Not Started' if id_list == TRELLO_NS_LIST_ID else 'Complete'
-
-        return cls(title, id, id_list, description, due_date, status)
+        return cls(title, id, id_list, description, due_date)
 
     @property
     def id(self):
@@ -121,12 +117,15 @@ class Item:
     @property
     def status(self):
         """
-        Returns the status of the item.
+        Determine status based on the list ID and returns the status of
+        the item.
 
         Returns:
             str: The status of the item.
         """
-        return self.status
+        return (
+            'Not Started' if self.id_list == TRELLO_NS_LIST_ID else 'Complete'
+        )
 
     def is_complete(self):
         """Check if the item is marked as complete.
@@ -138,14 +137,15 @@ class Item:
 
     def mark_as_complete(self):
         """Mark the item as complete."""
-        self.status = 'Complete'
         self.id_list = TRELLO_COMPLETE_LIST_ID
 
     def mark_as_not_started(self):
         """Mark the item as not started."""
-        self.status = 'Not Started'
         self.id_list = TRELLO_NS_LIST_ID
 
     def __str__(self):
         """Return a string representation of the item."""
-        return f"Item(id={self.id}, id_list={self.id_list}, title={self.title}, status={self.status})"
+        return (
+            f"Item(title={self.title}, id={self.id}, id_list={self.id_list}, "
+            f"description={self.description}, due_date={self.due_date})"
+        )
