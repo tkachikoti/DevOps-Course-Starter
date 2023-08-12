@@ -75,4 +75,3 @@ def mark_todo_item_complete(id):
         item.mark_as_done()
         save_item(item)
     return redirect(url_for('index'))
-
