@@ -74,3 +74,23 @@ You should see output similar to the following:
  * Debugger PIN: 226-556-590
 ```
 Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser to view the app.
+
+## Running the Tests
+
+The project uses [pytest](https://docs.pytest.org/en/stable/) to run tests. To run the tests, run the following from root directory of the project:
+
+```bash
+$ poetry run pytest
+```
+
+If you want to run a specific test, you can specify the test file and the test function like this:
+
+```bash
+$ poetry run pytest todo_app/test_todo_app.py::test_function_name
+```
+
+For example, the following command will only run the test_view_model_todo_items function in the test_todo_app.py file:
+
+```bash
+$ poetry run pytest todo_app/test_todo_app.py::test_view_model_todo_items
+```
