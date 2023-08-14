@@ -1,0 +1,38 @@
+<h3 class="text-center">{{ table_heading }}</h3>
+<table class="table table-responsive table-hover shadow p-3 mb-5 bg-body rounded">
+  <thead>
+      <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Status</th>
+          <th scope="col">Due Date</th>
+          <th scope="col">Actions</th>
+      </tr>
+  </thead>
+  <tbody class="w-100">
+      {% for item in list_of_items %}
+        <tr class="w-100 {% if item.is_status_done() %}table-success{% elif item.is_status_doing() %}table-info{% endif %}">
+          <th scope="row" class="w-100">{{ item.title }}</th>
+          <td class="wrap-table-text w-100">{{ item.status }}</td>
+          <td class="wrap-table-text w-100">{{ item.due_date }}</td>
+          <td>
+            <div class="dropdown">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Open Action Menu</button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                {% if item.is_status_todo() %}
+                  <li><a class="dropdown-item" href="{{ url_for('mark_todo_item_in_progress', id=item.id) }}">Mark as 'Doing'</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('mark_todo_item_complete', id=item.id) }}">Mark as 'Done'</a></li>
+                {% elif item.is_status_doing() %}
+                  <li><a class="dropdown-item" href="{{ url_for('mark_todo_item_not_started', id=item.id) }}">Mark as 'To Do'</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('mark_todo_item_complete', id=item.id) }}">Mark as 'Done'</a></li>
+                {% elif item.is_status_done() %}
+                  <li><a class="dropdown-item" href="{{ url_for('mark_todo_item_not_started', id=item.id) }}">Mark as 'To Do'</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('mark_todo_item_in_progress', id=item.id) }}">Mark as 'Doing'</a></li>
+                {% endif %}
+                <li><a class="dropdown-item" href="{{ url_for('delete_todo_item', id=item.id) }}" onclick="confirm_deletion(event)">Delete Item</a></li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+  </tbody>
+</table>

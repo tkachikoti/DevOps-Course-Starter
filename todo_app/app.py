@@ -13,21 +13,11 @@ app.config.from_object(Config())
 
 @app.route('/', methods=['GET'])
 def index():
-    sort_options = {
-        'sort_by': request.args.get('sort_by', 'status'),
-        'order_by_descending': request.args.get('order_by_descending', '0')
-    }
 
-    sort_by = sort_options['sort_by']
-    order_by_descending = bool(int(sort_options['order_by_descending']))
-    # items = ViewModel(items)
+    item_view_model = ViewModel(get_items())
     return render_template(
         'index.html',
-        sort_options=sort_options,
-        list_of_items=sorted(
-            get_items(),
-            key=lambda item: getattr(item, sort_by),
-            reverse=order_by_descending)
+        view_model=item_view_model
     )
 
 
