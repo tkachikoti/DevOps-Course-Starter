@@ -7,61 +7,60 @@ from todo_app.data.trello_items import (
 )
 from todo_app.flask_config import Config
 
-app = Flask(__name__)
-app.config.from_object(Config())
 
+def create_app():
 
-@app.route('/', methods=['GET'])
-def index():
+    app = Flask(__name__)
+    app.config.from_object(Config())
 
-    item_view_model = ViewModel(get_items())
-    return render_template(
-        'index.html',
-        view_model=item_view_model
-    )
+    @app.route('/', methods=['GET'])
+    def index():
 
+        item_view_model = ViewModel(get_items())
+        return render_template(
+            'index.html',
+            view_model=item_view_model
+        )
 
-@app.route('/add-todo-item', methods=['GET', 'POST'])
-def add_todo_item():
-    if request.method == 'GET':
-        return render_template('add-todo-item.html')
-    else:
-        item = Item(title=request.form.get('title', None),
-                    description=request.form.get('description', None),
-                    due_date=request.form.get('due_date', None))
-        add_item(item)
+    @app.route('/add-todo-item', methods=['GET', 'POST'])
+    def add_todo_item():
+        if request.method == 'GET':
+            return render_template('add-todo-item.html')
+        else:
+            item = Item(title=request.form.get('title', None),
+                        description=request.form.get('description', None),
+                        due_date=request.form.get('due_date', None))
+            add_item(item)
 
+            return redirect(url_for('index'))
+
+    @app.route('/delete-item/<id>', methods=['GET'])
+    def delete_todo_item(id):
+        delete_item(id)
         return redirect(url_for('index'))
 
+    @app.route('/not-started-item/<id>', methods=['GET'])
+    def mark_todo_item_not_started(id):
+        item = get_item(id)
+        if item:
+            item.mark_as_to_do()
+            save_item(item)
+        return redirect(url_for('index'))
 
-@app.route('/delete-item/<id>', methods=['GET'])
-def delete_todo_item(id):
-    delete_item(id)
-    return redirect(url_for('index'))
+    @app.route('/in-progress-item/<id>', methods=['GET'])
+    def mark_todo_item_in_progress(id):
+        item = get_item(id)
+        if item:
+            item.mark_as_doing()
+            save_item(item)
+        return redirect(url_for('index'))
 
+    @app.route('/complete-item/<id>', methods=['GET'])
+    def mark_todo_item_complete(id):
+        item = get_item(id)
+        if item:
+            item.mark_as_done()
+            save_item(item)
+        return redirect(url_for('index'))
 
-@app.route('/not-started-item/<id>', methods=['GET'])
-def mark_todo_item_not_started(id):
-    item = get_item(id)
-    if item:
-        item.mark_as_to_do()
-        save_item(item)
-    return redirect(url_for('index'))
-
-
-@app.route('/in-progress-item/<id>', methods=['GET'])
-def mark_todo_item_in_progress(id):
-    item = get_item(id)
-    if item:
-        item.mark_as_doing()
-        save_item(item)
-    return redirect(url_for('index'))
-
-
-@app.route('/complete-item/<id>', methods=['GET'])
-def mark_todo_item_complete(id):
-    item = get_item(id)
-    if item:
-        item.mark_as_done()
-        save_item(item)
-    return redirect(url_for('index'))
+    return app
