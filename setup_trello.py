@@ -17,7 +17,7 @@ Dependencies:
 import os
 import requests
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 load_dotenv()
 
@@ -51,7 +51,7 @@ def update_env_file():
     )
 
     # Path to the .env file
-    env_file_path = '.env'
+    env_file_path = find_dotenv('.env')
 
     # Read the existing .env file content
     with open(env_file_path, 'r') as file:

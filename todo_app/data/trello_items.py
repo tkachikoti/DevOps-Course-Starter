@@ -52,7 +52,8 @@ def get_items():
     Fetch all to-do items (cards) for the specified board.
 
     Returns:
-        list: The list of items from board.
+        list: The list of items from board, or raises an exception if the
+        request is unsuccessful.
     """
 
     # Prepare the payload with the Trello API key and token
@@ -68,9 +69,8 @@ def get_items():
             Item.translate_trello_card_to_item(card) for card in trello_cards
         ]
     else:
-        # Return an empty list if the response is unsuccessful or contains
-        # no data
-        items = []
+        # Raise an exception if the response is unsuccessful
+        r.raise_for_status()
 
     return items
 
@@ -83,7 +83,7 @@ def get_item(id):
         id: The ID of the item.
 
     Returns:
-        item: The saved item, or None if no items match the specified ID.
+        item: The saved item, or raises an exception if the item is not found.
     """
     # Prepare the payload with the Trello API key and token
     payload = create_base_payload()
@@ -95,8 +95,8 @@ def get_item(id):
         trello_card = r.json()
         item = Item.translate_trello_card_to_item(trello_card)
     else:
-        # Return None if the response is unsuccessful or contains no data
-        item = None
+        # Raise an exception if the response is unsuccessful
+        r.raise_for_status()
 
     return item
 
@@ -106,7 +106,7 @@ def add_item(item):
     Adds a new item (card) with the specified title to the to-do list.
 
     Returns:
-        item: Saved item.
+        item: Saved item, or raises an exception if the item is not saved.
     """
     # Prepare the payload with the Trello API key and token
     payload = create_base_payload()
@@ -123,21 +123,23 @@ def add_item(item):
         trello_card = r.json()
         item = Item.translate_trello_card_to_item(trello_card)
     else:
-        # Return None if the response is unsuccessful or contains no data
-        item = None
+        # Raise an exception if the response is unsuccessful
+        r.raise_for_status()
 
     return item
 
 
 def save_item(item):
     """
-    Updates an existing item (card). If no existing item matches the ID of the specified item, nothing is saved.
+    Updates an existing item (card). If no existing item matches the ID
+    of the specified item, nothing is saved.
 
     Args:
         item: The item to save.
 
     Returns:
-        dict: The updated item, or None if the update was unsuccessful.
+        dict: The updated item, or raises an exception if the item is not
+        updated.
     """
 
     # Prepare the payload with the Trello API key and token
@@ -156,8 +158,8 @@ def save_item(item):
         trello_card = r.json()
         updated_item = Item.translate_trello_card_to_item(trello_card)
     else:
-        # Return None if the response is unsuccessful or contains no data
-        updated_item = None
+        # Raise an exception if the response is unsuccessful
+        r.raise_for_status()
 
     return updated_item
 
@@ -171,7 +173,8 @@ def delete_item(id):
         id: The ID of the item to delete.
 
     Returns:
-        bool: True if the deletion was successful, False otherwise.
+        bool: True if the deletion was successful, or raises an exception if
+        the deletion is unsuccessful.
     """
 
     # Prepare the payload with the Trello API key and token
@@ -185,4 +188,5 @@ def delete_item(id):
     if r.status_code == requests.codes.ok:
         return True
     else:
-        return False
+        # Raise an exception if the response is unsuccessful
+        r.raise_for_status()
