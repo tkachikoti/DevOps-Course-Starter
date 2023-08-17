@@ -1,4 +1,6 @@
+import json
 import os
+import requests
 
 import pytest
 from dotenv import find_dotenv, load_dotenv
@@ -49,9 +51,35 @@ def TRELLO_DONE_LIST_ID():
     return os.getenv("TRELLO_DONE_LIST_ID")
 
 
-def test_index_page(client):
+def test_index_page(monkeypatch, client, load_environment_variables):
+    monkeypatch.setattr(requests, 'get', stub)
     response = client.get('/')
     assert response.status_code == 200
+    assert 'Item Name - Test One' in response.data.decode()
+
+
+class StubResponse():
+    def __init__(self, fake_response_data, status_code=200):
+        self.fake_response_data = fake_response_data
+        self._status_code = status_code
+
+    def json(self):
+        return self.fake_response_data
+
+    @property
+    def status_code(self):
+        return self._status_code
+
+
+def stub(url, params={}):
+    test_board_id = os.environ.get('TRELLO_BOARD_ID')
+    if url == f'https://api.trello.com/1/boards/{test_board_id}/cards':
+        mock_data_file_path = find_dotenv('trello_cards_mock_data.json')
+        with open(mock_data_file_path, 'r') as file:
+            fake_response_data = json.load(file)
+
+        return StubResponse(fake_response_data)
+    raise Exception(f'Integration test did not expect URL "{url}"')
 
 
 def test_view_model_todo_items(load_environment_variables,
