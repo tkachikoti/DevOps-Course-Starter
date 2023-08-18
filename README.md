@@ -86,11 +86,11 @@ $ poetry run pytest
 If you want to run a specific test, you can specify the test file and the test function like this:
 
 ```bash
-$ poetry run pytest todo_app/test_todo_app.py::test_function_name
+$ poetry run pytest todo_app/tests/test_todo_app.py::test_function_name
 ```
 
 For example, the following command will only run the test_view_model_todo_items function in the test_todo_app.py file:
 
 ```bash
-$ poetry run pytest todo_app/test_todo_app.py::test_view_model_todo_items
+$ poetry run pytest todo_app/tests/test_todo_app.py::test_view_model_todo_items
 ```
