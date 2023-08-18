@@ -20,9 +20,15 @@ class StubResponse():
 def stub(url, params={}):
     test_board_id = os.environ.get('TRELLO_BOARD_ID')
     if url == f'https://api.trello.com/1/boards/{test_board_id}/cards':
-        mock_data_file_path = find_dotenv('trello_cards_mock_data.json')
-        with open(mock_data_file_path, 'r') as file:
-            fake_response_data = json.load(file)
+        return mock_get_cards_endpoint()
+    elif url == 'https://api.trello.com/1/boards':
+        return StubResponse([{'id': test_board_id}])
+    raise Exception(f'Integration test did not expect URL "{url}"')
+
+
+def mock_get_cards_endpoint():
+    mock_data_file_path = find_dotenv('trello_cards_mock_data.json')
+    with open(mock_data_file_path, 'r') as file:
+        fake_response_data = json.load(file)
 
         return StubResponse(fake_response_data)
-    raise Exception(f'Integration test did not expect URL "{url}"')

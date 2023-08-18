@@ -10,6 +10,12 @@ def test_index_get_route(monkeypatch, client):
     assert 'Item Name - Test One' in response.data.decode()
 
 
+def test_add_todo_item_get_route(client):
+    response = client.get('/add-todo-item')
+    assert response.status_code == 200
+    assert 'ADD TODO ITEM' in response.data.decode()
+
+
 def test_view_model_todo_items(example_view_model_items):
     assert len(example_view_model_items.todo_items) > 0
     assert all(
