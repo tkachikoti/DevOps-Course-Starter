@@ -40,11 +40,128 @@ def TRELLO_BOARD_ID():
 
 TRELLO_API_BASE_URL = "https://api.trello.com/1/"
 BOARDS_URL_PATH = "boards/"
+LISTS_URL_PATH = "lists/"
 CARDS_URL_PATH = "cards/"
 
 
 def create_base_payload():
     return {"key": TRELLO_API_KEY(), "token": TRELLO_API_TOKEN()}
+
+
+def create_board(board_name):
+    """
+    Creates a new board on Trello with the specified name.
+
+    Returns:
+        dict: The board that was created, or raises an exception if the board
+        is not created.
+    """
+
+    # Prepare the payload with the Trello API key and token
+    payload = create_base_payload()
+    payload['name'] = board_name
+    payload['defaultLists'] = "false"
+
+    # Send the POST request to create the board
+    url = TRELLO_API_BASE_URL + BOARDS_URL_PATH
+    r = requests.post(url, params=payload)
+
+    # Check if the request was successful and the response contains JSON data
+    if r.status_code == requests.codes.ok and r.json():
+        trello_board = r.json()
+    else:
+        # Raise an exception if the response is unsuccessful
+        r.raise_for_status()
+
+    return trello_board
+
+
+def delete_board(id):
+    """
+    Deletes an existing board with the specified ID from Trello.
+
+    Args:
+        id: The ID of the board to delete.
+
+    Returns:
+        bool: True if the deletion was successful, or raises an exception if
+        the deletion is unsuccessful.
+    """
+
+    # Prepare the payload with the Trello API key and token
+    payload = create_base_payload()
+
+    # Send the DELETE request to remove the board
+    url = TRELLO_API_BASE_URL + BOARDS_URL_PATH + id
+    r = requests.delete(url, params=payload)
+
+    # Check if the request was successful (status code 200)
+    if r.status_code == requests.codes.ok:
+        return True
+    else:
+        # Raise an exception if the response is unsuccessful
+        r.raise_for_status()
+
+
+def create_list_on_board(list_name, board_id):
+    """
+    Creates a new list on Trello with the specified name.
+
+    Args:
+        list_name: The name of the list to create.
+        board_id: The ID of the board on which to create the list.
+
+    Returns:
+        dict: The list that was created, or raises an exception if the list
+        is not created.
+    """
+
+    # Prepare the payload with the Trello API key and token
+    payload = create_base_payload()
+    payload['name'] = list_name
+
+    # Send the POST request to create the list
+    url = (
+        TRELLO_API_BASE_URL + BOARDS_URL_PATH + board_id + '/'
+        + LISTS_URL_PATH[:-1]
+    )
+    r = requests.post(url, params=payload)
+
+    # Check if the request was successful and the response contains JSON data
+    if r.status_code == requests.codes.ok and r.json():
+        trello_list = r.json()
+    else:
+        # Raise an exception if the response is unsuccessful
+        r.raise_for_status()
+
+    return trello_list
+
+
+def delete_list_on_board(id):
+    """
+    Deletes an existing list with the specified ID from Trello.
+
+    Args:
+        id: The ID of the list to delete.
+
+    Returns:
+        bool: True if the deletion was successful, or raises an exception if
+        the deletion is unsuccessful.
+    """
+
+    # Prepare the payload with the Trello API key and token
+    payload = create_base_payload()
+
+    # Send the DELETE request to remove the list
+    url = TRELLO_API_BASE_URL + LISTS_URL_PATH + id
+    r = requests.delete(url, params=payload)
+
+    # Check if the request was successful (status code 200)
+    if r.status_code == requests.codes.ok:
+        return True
+    else:
+        # Raise an exception if the response is unsuccessful
+        r.raise_for_status()
 
 
 def get_items():
@@ -56,6 +173,7 @@ def get_items():
         request is unsuccessful.
     """
 
+    items = []
     # Prepare the payload with the Trello API key and token
     payload = create_base_payload()
     url = (TRELLO_API_BASE_URL + BOARDS_URL_PATH + TRELLO_BOARD_ID() +
