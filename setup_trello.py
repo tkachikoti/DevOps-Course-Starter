@@ -12,7 +12,7 @@ Dependencies:
     - dotenv
 """
 
-import time
+from time import sleep
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -30,15 +30,15 @@ def setup_trello():
 
     # Create the lists on the board
     trello_lists = {
-        "To Do": "todo-list-id",
+        "Done": "done-list-id",
         "Doing": "doing-list-id",
-        "Done": "done-list-id"
+        "To Do": "todo-list-id"
     }
 
     for name in trello_lists.keys():
         new_trello_list = create_list_on_board(name, new_trello_board["id"])
         trello_lists[name] = new_trello_list["id"]
-        time.sleep(RATE_LIMIT_DELAY_IN_SECONDS)
+        sleep(RATE_LIMIT_DELAY_IN_SECONDS)
         print(f"'{name}' List created\n")
 
     # Path to the .env file
