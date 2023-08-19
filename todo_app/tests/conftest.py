@@ -4,6 +4,7 @@ from threading import Thread
 
 import pytest
 from dotenv import find_dotenv, load_dotenv
+from selenium import webdriver
 
 from todo_app.data.trello_items import create_board, delete_board
 from todo_app.data.view_model import ViewModel
@@ -64,3 +65,9 @@ def app_with_temp_board():
     # Tear Down
     thread.join(1)
     delete_board(temp_board["id"])
+
+
+@pytest.fixture(scope="module")
+def driver():
+    with webdriver.Firefox() as driver:
+        yield driver
