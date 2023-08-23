@@ -137,33 +137,6 @@ def create_list_on_board(list_name, board_id):
     return trello_list
 
 
-def delete_list_on_board(id):
-    """
-    Deletes an existing list with the specified ID from Trello.
-
-    Args:
-        id: The ID of the list to delete.
-
-    Returns:
-        bool: True if the deletion was successful, or raises an exception if
-        the deletion is unsuccessful.
-    """
-
-    # Prepare the payload with the Trello API key and token
-    payload = create_base_payload()
-
-    # Send the DELETE request to remove the list
-    url = TRELLO_API_BASE_URL + LISTS_URL_PATH + id
-    r = requests.delete(url, params=payload)
-
-    # Check if the request was successful (status code 200)
-    if r.status_code == requests.codes.ok:
-        return True
-    else:
-        # Raise an exception if the response is unsuccessful
-        r.raise_for_status()
-
-
 def get_items():
     """
     Fetch all to-do items (cards) for the specified board.
