@@ -1,6 +1,7 @@
 import json
 import os
 
+
 class StubResponse():
     def __init__(self, fake_response_data, status_code=200):
         self.fake_response_data = fake_response_data
