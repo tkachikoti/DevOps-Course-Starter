@@ -1,9 +1,6 @@
 import json
 import os
 
-from dotenv import find_dotenv
-
-
 class StubResponse():
     def __init__(self, fake_response_data, status_code=200):
         self.fake_response_data = fake_response_data
@@ -27,7 +24,7 @@ def stub(url, params={}):
 
 
 def mock_get_cards_endpoint():
-    mock_data_file_path = find_dotenv('trello_cards_mock_data.json')
+    mock_data_file_path = 'todo_app/tests/trello_cards_mock_data.json'
     with open(mock_data_file_path, 'r') as file:
         fake_response_data = json.load(file)
 
