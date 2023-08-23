@@ -86,5 +86,5 @@ $ poetry run pytest todo_app/tests/test_todo_app.py::test_function_name
 For example, the following command will only run the test_view_model_todo_items function in the test_todo_app.py file:
 
 ```bash
-$ poetry run pytest todo_app/tests/test_todo_app.py::test_view_model_todo_items
+$ poetry run pytest todo_app/tests/test_unit.py::test_view_model_todo_items
 ```
