@@ -1,0 +1,105 @@
+---
+- name: System Preparation
+  hosts: managed
+  remote_user: ec2-user
+  become: yes
+  tasks:
+    - name: Install Git
+      yum:
+        name: git
+        state: present
+
+    - name: Enable Amazon Linux Extras repository for Python 3.8
+      command: amazon-linux-extras enable python3.8
+      args:
+        creates: /etc/yum.repos.d/amzn2extra-python3.8.repo
+
+    - name: Install Python 3.8
+      yum:
+        name: python38
+        state: present
+
+    - name: Create /opt/todoapp directory
+      file:
+        path: /opt/todoapp
+        state: directory
+        owner: ec2-user
+        group: ec2-user
+        mode: '0755'
+
+- name: Software Installation and Setup
+  hosts: managed
+  remote_user: ec2-user
+  tasks:
+    - name: Install Poetry via curl
+      shell: curl -sSL https://install.python-poetry.org | python3.8 -
+      environment:
+        POETRY_VERSION: 1.4.1
+      args:
+        creates: ~/.local/bin/poetry
+
+    - name: Clone To Do app repository
+      become: yes
+      become_user: ec2-user
+      git:
+        repo: 'https://github.com/tkachikoti/DevOps-Course-Starter.git'
+        dest: '/opt/todoapp'
+        version: 'main'
+
+    - name: Set Python 3.8 for Poetry
+      shell: "~/.local/bin/poetry env use python3.8"
+      args:
+        chdir: /opt/todoapp
+
+    - name: Install To Do app dependencies using Poetry
+      become: yes
+      become_user: ec2-user
+      command:
+        cmd: '~/.local/bin/poetry install'
+        chdir: '/opt/todoapp'
+
+- name: To-Do App Configuration
+  hosts: managed
+  remote_user: ec2-user
+  become: yes
+  vars_prompt:
+    - name: "secret_key"
+      prompt: "Enter SECRET_KEY"
+      private: yes
+    - name: "trello_api_key"
+      prompt: "Enter TRELLO_API_KEY"
+      private: yes
+    - name: "trello_api_token"
+      prompt: "Enter TRELLO_API_TOKEN"
+      private: yes
+  tasks:
+    - name: Create .env from template
+      template:
+        src: /home/ec2-user/ect/ansible/.env.j2
+        dest: /opt/todoapp/.env
+        owner: ec2-user
+
+    - name: Run setup_trello.py using Poetry
+      command:
+        cmd: '~/.local/bin/poetry run python3.8 setup_trello.py'
+        chdir: '/opt/todoapp'
+
+- name: Service Setup and Activation
+  hosts: managed
+  remote_user: ec2-user
+  become: yes
+  tasks:
+    - name: Copy todoapp.service to systemd folder
+      copy:
+        src: /home/ec2-user/ect/ansible/todoapp.service
+        dest: /etc/systemd/system/todoapp.service
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Start and enable todoapp.service
+      systemd:
+        name: todoapp.service
+        enabled: yes
+        state: restarted
+        daemon_reload: yes
