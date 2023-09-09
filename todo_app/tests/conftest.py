@@ -15,14 +15,21 @@ TIME_IN_SECONDS = 1
 
 
 @pytest.fixture
-def load_environment_variables():
+def load_fake_environment_variables():
     # Use our test integration config instead of the 'real' version
     file_path = find_dotenv('.env.test')
     load_dotenv(file_path, override=True)
 
 
 @pytest.fixture
-def client(load_environment_variables):
+def load_real_environment_variables():
+    # Load the real environment variables
+    file_path = find_dotenv('.env')
+    load_dotenv(file_path, override=True)
+
+
+@pytest.fixture
+def client(load_fake_environment_variables):
     # Create the new app.
     test_app = app.create_app()
     # Use the app to create a test_client that can be used in our tests.
@@ -31,7 +38,7 @@ def client(load_environment_variables):
 
 
 @pytest.fixture
-def example_view_model_items(load_environment_variables):
+def example_view_model_items(load_fake_environment_variables):
     # Create mock items
     item1 = Item(title="Task 1", id_list=os.getenv("TRELLO_TODO_LIST_ID"))
     item2 = Item(title="Task 2", id_list=os.getenv("TRELLO_DOING_LIST_ID"))
@@ -44,7 +51,7 @@ def example_view_model_items(load_environment_variables):
 
 
 @pytest.fixture(scope='module')
-def app_with_temp_board():
+def app_with_temp_board(load_real_environment_variables):
     # Create the new board & update the board id environment variable
     temp_board = create_board("Temp Board For Testing")
     os.environ['TRELLO_BOARD_ID'] = temp_board["id"]
