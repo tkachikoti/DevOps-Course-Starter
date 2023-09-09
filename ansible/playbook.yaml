@@ -2,24 +2,27 @@
 - name: System Preparation
   hosts: managed
   remote_user: ec2-user
-  become: yes
   tasks:
     - name: Install Git
+      become: yes
       yum:
         name: git
         state: present
 
     - name: Enable Amazon Linux Extras repository for Python 3.8
+      become: yes
       command: amazon-linux-extras enable python3.8
       args:
         creates: /etc/yum.repos.d/amzn2extra-python3.8.repo
 
     - name: Install Python 3.8
+      become: yes
       yum:
         name: python38
         state: present
 
     - name: Create /opt/todoapp directory
+      become: yes
       file:
         path: /opt/todoapp
         state: directory
@@ -39,8 +42,6 @@
         creates: ~/.local/bin/poetry
 
     - name: Clone To Do app repository
-      become: yes
-      become_user: ec2-user
       git:
         repo: 'https://github.com/tkachikoti/DevOps-Course-Starter.git'
         dest: '/opt/todoapp'
@@ -61,7 +62,6 @@
 - name: To-Do App Configuration
   hosts: managed
   remote_user: ec2-user
-  become: yes
   vars_prompt:
     - name: "secret_key"
       prompt: "Enter SECRET_KEY"
@@ -74,12 +74,14 @@
       private: yes
   tasks:
     - name: Create .env from template
+      become: yes
       template:
         src: /home/ec2-user/ect/ansible/.env.j2
         dest: /opt/todoapp/.env
         owner: ec2-user
 
     - name: Run setup_trello.py using Poetry
+      become: yes
       command:
         cmd: '~/.local/bin/poetry run python3.8 setup_trello.py'
         chdir: '/opt/todoapp'
@@ -87,9 +89,9 @@
 - name: Service Setup and Activation
   hosts: managed
   remote_user: ec2-user
-  become: yes
   tasks:
     - name: Copy todoapp.service to systemd folder
+      become: yes
       copy:
         src: /home/ec2-user/ect/ansible/todoapp.service
         dest: /etc/systemd/system/todoapp.service
@@ -98,6 +100,7 @@
         mode: '0644'
 
     - name: Start and enable todoapp.service
+      become: yes
       systemd:
         name: todoapp.service
         enabled: yes
