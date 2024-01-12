@@ -1,17 +1,14 @@
 # Stage 1: Base image with common operations and dependencies
-FROM python:3.9.13-alpine as base
+FROM python:slim-buster as base
 
 # Set a working directory
 WORKDIR /app
 
 # Install required system dependencies
-RUN apk add --no-cache curl
+RUN apt-get update
 
 # Install Poetry
-RUN curl -sSL https://install.python-poetry.org | python -
-
-# Set the PATH for poetry
-ENV PATH="$PATH:/root/.local/bin"
+RUN pip install poetry
 
 # Disable virtualenv creation
 RUN poetry config virtualenvs.create false && \
@@ -73,7 +70,7 @@ ENTRYPOINT ["poetry", "run", "pytest"]
 FROM base as production
 
 # Install Python dependencies using Poetry
- RUN poetry install --no-dev
+ RUN poetry install
 
 # Define the entrypoint for Gunicorn
 CMD gunicorn -b 0.0.0.0:$PORT "todo_app.app:create_app()"
