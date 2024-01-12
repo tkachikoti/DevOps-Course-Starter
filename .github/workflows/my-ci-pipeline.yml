@@ -33,13 +33,3 @@ jobs:
 
     - name: Run Tests in Docker
       run: docker run --rm todo_app_test
-
-    - name: Copy Test Results
-      run: docker cp todo_app_test-container:/app/test-results.xml .
-
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v2
-      if: failure()
-      with:
-        name: test-results
-        path: test-results.xml
