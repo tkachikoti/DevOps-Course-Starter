@@ -28,7 +28,7 @@ FROM base as production
  RUN poetry install --no-dev
 
 # Define the entrypoint for Gunicorn
-ENTRYPOINT ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:8000", "todo_app.app:create_app()"]
+ENTRYPOINT ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:$PORT", "todo_app.app:create_app()"]
 
 
 # Stage 3: Development image
