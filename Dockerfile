@@ -24,12 +24,11 @@ COPY . /app
 # Stage 2: Production image
 FROM base as production
 
-# Install dependencies
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+# Install Python dependencies using Poetry
+ RUN poetry install --no-dev
 
-# Set the command to start the app
-CMD gunicorn --bind 0.0.0.0:$PORT todo_app.app:create_app()
+# Define the entrypoint for Gunicorn
+ENTRYPOINT ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:$PORT", "todo_app.app:create_app()"]
 
 
 # Stage 3: Development image
@@ -65,16 +64,3 @@ ENV FLASK_ENV=development
 
 # Keep the container running
 CMD tail -f /dev/null
-
-
-# Stage 4: Test environment
-FROM base as test
-
-# Copy your application code and tests
-COPY . /app
-
-# Install dependencies
-RUN poetry install
-
-# Run tests
-ENTRYPOINT ["poetry", "run", "pytest"]
