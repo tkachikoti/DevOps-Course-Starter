@@ -24,11 +24,12 @@ COPY . /app
 # Stage 2: Production image
 FROM base as production
 
-# Install Python dependencies using Poetry
- RUN poetry install --no-dev
+# Install dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-# Define the entrypoint for Gunicorn
-ENTRYPOINT ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:$PORT", "todo_app.app:create_app()"]
+# Set the command to start the app
+CMD gunicorn --bind 0.0.0.0:$PORT todo_app.app:create_app()
 
 
 # Stage 3: Development image
