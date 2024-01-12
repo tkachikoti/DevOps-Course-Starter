@@ -55,7 +55,7 @@ jobs:
         docker build --target production -t ${{ secrets.DOCKER_HUB_USERNAME }}/todo_app:latest .
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/todo_app:latest
 
-    - name: Deploy to Heroku
+    - name: Deploy to Heroku app
       uses: akhileshns/heroku-deploy@v3.12.12
       with:
         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
