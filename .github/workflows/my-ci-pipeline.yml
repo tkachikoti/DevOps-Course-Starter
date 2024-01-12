@@ -1,13 +1,14 @@
-name: Docker Test Workflow
+name: Docker Test and Deploy Workflow
 
 on:
   push:
+    branches:
+      - deployment_test_branch
     paths-ignore:
-    - 'README.md'
-
+      - 'README.md'
   pull_request:
     paths-ignore:
-    - 'README.md'
+      - 'README.md'
 
 jobs:
   test:
@@ -28,8 +29,36 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildx-
 
-    - name: Build Docker Image for testing
+    - name: Build Docker Image for Testing
       run: docker build --target test -t todo_app_test .
 
     - name: Run Tests in Docker
       run: docker run --rm todo_app_test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/deployment_test_branch'
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+    - name: Build and push Docker image
+      run: |
+        docker build --target production -t ${{ secrets.DOCKER_HUB_USERNAME }}/todo_app:latest .
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/todo_app:latest
+
+    - name: Deploy to Heroku app
+      uses: akhileshns/heroku-deploy@v3.12.12
+      with:
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+        heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        usedocker: true
