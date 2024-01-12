@@ -36,7 +36,7 @@ jobs:
       run: docker run --rm todo_app_test
 
   deploy:
-    needs: test
+
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/deployment_test_branch'
     
