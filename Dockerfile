@@ -10,24 +10,32 @@ RUN apk add --no-cache curl
 # Install Poetry
 RUN curl -sSL https://install.python-poetry.org | python -
 
-# Copy the rest of the local application code to the container
-COPY . /app
-
 # Set the PATH for poetry
 ENV PATH="$PATH:/root/.local/bin"
 
-# Install Python dependencies using Poetry
+# Disable virtualenv creation
 RUN poetry config virtualenvs.create false && \
-    poetry install --no-dev
+    poetry config virtualenvs.in-project false
+
+# Copy the rest of the local application code to the container
+COPY . /app
+
 
 # Stage 2: Production image
 FROM base as production
 
+# Install Python dependencies using Poetry
+ RUN poetry install --no-dev
+
 # Define the entrypoint for Gunicorn
 ENTRYPOINT ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:8000", "todo_app.app:create_app()"]
 
+
 # Stage 3: Development image
 FROM base as development
+
+# Install Python dependencies using Poetry
+ RUN poetry install
 
 # Expose the Flask application port
 EXPOSE 5000
@@ -35,5 +43,38 @@ EXPOSE 5000
 # Set the FLASK_APP environment variable
 ENV FLASK_APP=todo_app/app.py
 
-# Set the entrypoint for development
+# Set the command for development
 CMD ["poetry", "run", "flask", "run", "--host=0.0.0.0", "--reload"]
+
+
+# Stage 4: Debug image
+FROM base as debug
+
+# Install Python dependencies using Poetry
+ RUN poetry install
+
+# Expose the Flask application port
+EXPOSE 5000
+
+# Set the FLASK_APP environment variable
+ENV FLASK_APP=todo_app/app.py
+
+# Set the environment to development
+ENV FLASK_ENV=development
+
+# Keep the container running
+CMD tail -f /dev/null
+
+
+# Stage 4: Test environment
+FROM base as test
+
+# Copy your application code and tests
+COPY . /app
+
+# Install dependencies
+RUN poetry install && \
+    poetry add pytest-watch
+
+# Run tests
+ENTRYPOINT ["poetry", "run", "ptw", "--poll", "--"]
