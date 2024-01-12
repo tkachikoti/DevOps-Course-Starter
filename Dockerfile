@@ -70,7 +70,9 @@ ENTRYPOINT ["poetry", "run", "pytest"]
 FROM base as production
 
 # Install Python dependencies using Poetry
- RUN poetry install
+ RUN poetry install --no-dev
+
+RUN pip install gunicorn
 
 # Define the entrypoint for Gunicorn
 CMD gunicorn -b 0.0.0.0:$PORT "todo_app.app:create_app()"
