@@ -73,8 +73,7 @@ FROM base as test
 COPY . /app
 
 # Install dependencies
-RUN poetry install && \
-    poetry add pytest-watch
+RUN poetry install
 
 # Run tests
-ENTRYPOINT ["poetry", "run", "ptw", "--poll", "--"]
+ENTRYPOINT ["poetry", "run", "pytest"]
