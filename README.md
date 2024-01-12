@@ -73,6 +73,15 @@ Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser
 
 ## Building and Running Containers
 
+### Test Container
+
+To build and run the test container, use the following commands:
+
+```
+$ docker build --target test --tag todo-app:test .
+$ docker run --rm todo-app:test
+```
+
 ### Development Container
 
 To build and run the development container, use the following commands:
@@ -92,8 +101,6 @@ To build and run the production container, use the following commands:
 $ docker build --target production --tag todo-app:prod .
 $ docker run --env-file .env --publish 127.0.0.1:5000:8000 todo-app:prod
 ```
-
-This will start a production container for your application.
 
 ## Running the Tests
 
