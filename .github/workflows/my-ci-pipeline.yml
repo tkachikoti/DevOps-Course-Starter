@@ -2,7 +2,12 @@ name: Docker Test Workflow
 
 on:
   push:
+    paths-ignore:
+    - 'README.md'
+
   pull_request:
+    paths-ignore:
+    - 'README.md'
 
 jobs:
   test:
@@ -24,13 +29,13 @@ jobs:
           ${{ runner.os }}-buildx-
 
     - name: Build Docker Image for Testing
-      run: docker build --target test -t myapp-test .
+      run: docker build --target test -t todo_app_test .
 
     - name: Run Tests in Docker
-      run: docker run --rm myapp-test
+      run: docker run --rm todo_app_test
 
     - name: Copy Test Results
-      run: docker cp myapp-test-container:/app/test-results.xml .
+      run: docker cp todo_app_test-container:/app/test-results.xml .
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v2
