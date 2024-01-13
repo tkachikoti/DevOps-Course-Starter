@@ -76,4 +76,4 @@ COPY . /app
 RUN poetry install
 
 # Run tests
-ENTRYPOINT ["poetry", "run", "pytest"]
+CMD ["poetry", "run", "pytest"]
