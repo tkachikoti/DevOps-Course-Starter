@@ -21,14 +21,7 @@ RUN poetry config virtualenvs.create false && \
 COPY . /app
 
 
-# Stage 2: Production image
-FROM base as production
 
-# Install Python dependencies using Poetry
-RUN poetry install --no-dev
-
-# Define the entrypoint for Gunicorn
-ENTRYPOINT [ "executable" ] ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:$PORT", "todo_app.app:create_app()"]
 
 
 # Stage 3: Development image
@@ -66,14 +59,12 @@ ENV FLASK_ENV=development
 CMD tail -f /dev/null
 
 
-# Stage 4: Test environment
-FROM base as test
 
-# Copy your application code and tests
-COPY . /app
+# Stage 2: Production image
+FROM base as production
 
-# Install dependencies
-RUN poetry install
+# Install Python dependencies using Poetry
+RUN poetry install --no-dev
 
-# Run tests
-CMD ["poetry", "run", "pytest"]
+# Define the entrypoint for Gunicorn
+ENTRYPOINT [ "executable" ] ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:$PORT", "todo_app.app:create_app()"]
