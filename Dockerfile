@@ -25,7 +25,7 @@ COPY . /app
 FROM base as production
 
 # Install Python dependencies using Poetry
- RUN poetry install --no-dev
+RUN poetry install --no-dev
 
 # Define the entrypoint for Gunicorn
 CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:$PORT", "todo_app.app:create_app()"]
@@ -35,7 +35,7 @@ CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:$PORT", "todo_app.app:creat
 FROM base as development
 
 # Install Python dependencies using Poetry
- RUN poetry install
+RUN poetry install && pip install gunicorn
 
 # Expose the Flask application port
 EXPOSE 5000
@@ -51,7 +51,7 @@ CMD ["poetry", "run", "flask", "run", "--host=0.0.0.0", "--reload"]
 FROM base as debug
 
 # Install Python dependencies using Poetry
- RUN poetry install
+RUN poetry install
 
 # Expose the Flask application port
 EXPOSE 5000
