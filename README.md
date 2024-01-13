@@ -2,11 +2,15 @@
 
 > If you are using GitPod for the project exercise (i.e. you cannot use your local machine) then you'll want to launch a VM using the [following link](https://gitpod.io/#https://github.com/CorndelWithSoftwire/DevOps-Course-Starter). Note this VM comes pre-setup with Python & Poetry pre-installed.
 
+Link to Heroku App: [https://tnk-todo-app-c35bb5f5e658.herokuapp.com/](https://tnk-todo-app-c35bb5f5e658.herokuapp.com/)
+
 ## Table of contents
 
 - [System Requirements](#system-requirements)
 - [Dependencies](#dependencies)
 - [Running the App](#running-the-app)
+- [Building and Running Containers](#building-and-running-containers)
+
 ## System Requirements
 
 The project uses poetry for Python to create an isolated environment and manage package dependencies. To prepare your system, ensure you have an official distribution of [Python](https://www.python.org/downloads/) version 3.7+ and install Poetry using one of the following commands (as instructed by the [poetry documentation](https://python-poetry.org/docs/#system-requirements)):
@@ -68,6 +72,37 @@ You should see output similar to the following:
  * Debugger PIN: 226-556-590
 ```
 Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser to view the app.
+
+## Building and Running Containers
+
+### Test Container
+
+To build and run the test container, use the following commands:
+
+```
+$ docker build --target test --tag todo-app:test .
+$ docker run --rm todo-app:test
+```
+
+### Development Container
+
+To build and run the development container, use the following commands:
+
+```
+$ docker build --target development --tag todo-app:dev .
+$ docker run --env-file .env --publish 127.0.0.1:5000:5000 --mount type=bind,source="$(pwd)"/todo_app,target=/app/todo_app todo-app:dev
+```
+
+This will start a development container with hot reloading enabled. Any changes you make to your Python files will trigger Flask to reload the application automatically.
+
+### Production Container
+
+To build and run the production container, use the following commands:
+
+```
+$ docker build --target production --tag todo-app:prod .
+$ docker run --env-file .env --publish 127.0.0.1:5000:8000 todo-app:prod
+```
 
 ## Running the Tests
 
