@@ -21,10 +21,7 @@ RUN poetry config virtualenvs.create false && \
 COPY . /app
 
 
-
-
-
-# Stage 3: Development image
+# Stage 2: Development image
 FROM base as development
 
 # Install Python dependencies using Poetry
@@ -40,7 +37,7 @@ ENV FLASK_APP=todo_app/app.py
 CMD ["poetry", "run", "flask", "run", "--host=0.0.0.0", "--reload"]
 
 
-# Stage 4: Debug image
+# Stage 3: Debug image
 FROM base as debug
 
 # Install Python dependencies using Poetry
@@ -59,8 +56,20 @@ ENV FLASK_ENV=development
 CMD tail -f /dev/null
 
 
+# Stage 4: Test environment
+FROM base as test
 
-# Stage 2: Production image
+# Copy your application code and tests
+COPY . /app
+
+# Install dependencies
+RUN poetry install
+
+# Run tests
+CMD ["poetry", "run", "pytest"]
+
+
+# Stage 5: Production image
 FROM base as production
 
 # Install Python dependencies using Poetry
