@@ -66,11 +66,17 @@
     - name: "secret_key"
       prompt: "Enter SECRET_KEY"
       private: yes
-    - name: "trello_api_key"
-      prompt: "Enter TRELLO_API_KEY"
+    - name: "mongo_user_name"
+      prompt: "Enter MONGO_USER_NAME"
       private: yes
-    - name: "trello_api_token"
-      prompt: "Enter TRELLO_API_TOKEN"
+    - name: "mongo_password"
+      prompt: "Enter MONGO_PASSWORD"
+      private: yes
+    - name: "mongo_host"
+      prompt: "Enter MONGO_HOST"
+      private: yes
+    - name: "mongo_default_database"
+      prompt: "Enter MONGO_DEFAULT_DATABASE"
       private: yes
   tasks:
     - name: Create .env from template
@@ -80,11 +86,6 @@
         dest: /opt/todoapp/.env
         owner: ec2-user
 
-    - name: Run setup_trello.py using Poetry
-      become: yes
-      command:
-        cmd: '~/.local/bin/poetry run python3.8 setup_trello.py'
-        chdir: '/opt/todoapp'
 
 - name: Service Setup and Activation
   hosts: managed

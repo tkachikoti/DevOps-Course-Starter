@@ -1,17 +1,22 @@
 from flask import Flask, render_template, redirect, url_for, request
+import logging
 
 from todo_app.data.item import Item
 from todo_app.data.view_model import ViewModel
-from todo_app.data.trello_items import (
+from todo_app.data.tasks_collection_items import (
     get_items, get_item, add_item, delete_item, save_item
 )
 from todo_app.flask_config import Config
+from todo_app.data.mongo_db_manager import MongoDBManager
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 def create_app():
 
     app = Flask(__name__)
     app.config.from_object(Config())
+    app.mongo_db_manager = MongoDBManager()
 
     @app.route('/', methods=['GET'])
     def index():

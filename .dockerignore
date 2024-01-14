@@ -1,0 +1,17 @@
+# Ignore log and temporary files
+*.log
+*.tmp
+
+# Ignore common development files and directories
+ansible
+.github
+.gitpod.yml
+.pytest_cache
+.vscode
+
+
+# Ignore build and configuration files
+Dockerfile
+docker-compose.yml
+.venv/
+*.env
