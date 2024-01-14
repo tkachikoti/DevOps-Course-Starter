@@ -3,7 +3,7 @@ name: Docker Test and Deploy Workflow
 on:
   push:
     branches:
-      - main
+      - deployment_test_branch
     paths-ignore:
       - 'README.md'
   pull_request:
@@ -38,7 +38,7 @@ jobs:
   deploy:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/deployment_test_branch'
     
     steps:
     - name: Checkout Repository
