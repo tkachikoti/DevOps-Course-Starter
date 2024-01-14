@@ -43,16 +43,10 @@ $ cp .env.template .env  # (first time only)
 
 The `.env` file is used by flask to set environment variables when running `flask run`. This enables things like development mode (which also enables features like hot reloading when you make a file change). There's also a [SECRET_KEY](https://flask.palletsprojects.com/en/1.1.x/config/#SECRET_KEY) variable which is used to encrypt the flask session cookie.
 
-The app relies on Trello to handle its to-do items and requires a Trello account, API key, and token to function. You will need to [create an account](https://trello.com/signup) on Trello, then generate an API key and token by following the [instructions here](https://developer.atlassian.com/cloud/trello/guides/rest-api/api-introduction/). After creating the API key and token, assign them in the corresponding variables in the newly made `.env` file.
+The app relies on MongoDB to handle its to-do items and requires a MongoBD cluster with a username, password and host URL to function. Instructions for this can be found on [MongoDB support](https://www.mongodb.com/docs/manual/) pages. After creating a cluster, assign them in the corresponding variables in the newly made `.env` file.
 
 > [!WARNING]
 > These credentials are tied to your account and need to be kept secret!
-
-Following this, run the `trello_setup.py` script to configure other Trello-related variables in the `.env` file.
-
-```bash
-$ poetry run python setup_trello.py # (first time only)
-```
 
 ## Running the App
 
