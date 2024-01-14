@@ -1,0 +1,26 @@
+[
+    {   
+        "title": "Write MongoDB module",
+        "id_list": "DOING_LIST",
+        "description": "Write a module for MongoDB using pymongo.",
+        "due_date": "2024-02-26"
+    },
+    {   
+        "title": "Remove old logic",
+        "id_list": "DONE_LIST",
+        "description": "Remove all traces of old logic from code.",
+        "due_date": "2024-02-27"
+    },
+    {   
+        "title": "Update Tests",
+        "id_list": "TODO_LIST",
+        "description": "Update tests to ensure they contain correct code.",
+        "due_date": "2024-02-27"
+    },
+    {   
+        "title": "Update CI",
+        "id_list": "TODO_LIST",
+        "description": "Update CI to ensure everything works as intended.",
+        "due_date": "2024-02-28"
+    }
+]

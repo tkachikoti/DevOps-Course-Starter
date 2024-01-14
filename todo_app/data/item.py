@@ -4,59 +4,17 @@ Item Class
 This class represents a to-do item, with attributes for its ID, title, and
 status. The status can be 'Not Started' or 'Complete'. The class provides
 methods to mark the item as complete or not started, and update the title.
-
-The following constants are used to configure the Trello lists:
-- TRELLO_TODO_LIST_ID: The ID of the 'To Do' list on the Trello board
-- TRELLO_DOING_LIST_ID: The ID of the 'Doing' list on the Trello board
-- TRELLO_DONE_LIST_ID: The ID of the 'Done' list on the Trello board
 """
-
-import os
-
-
-def TRELLO_TODO_LIST_ID():
-    return os.getenv("TRELLO_TODO_LIST_ID")
-
-
-def TRELLO_DOING_LIST_ID():
-    return os.getenv("TRELLO_DOING_LIST_ID")
-
-
-def TRELLO_DONE_LIST_ID():
-    return os.getenv("TRELLO_DONE_LIST_ID")
 
 
 class Item:
-    def __init__(self, title, id=None, id_list=TRELLO_TODO_LIST_ID(),
-                 description=None, due_date=None):
+    def __init__(self, item_data):
         """Initialize a new Item with the given ID, title, and status."""
-        self._title = title
-        self._id = id
-        self._id_list = id_list
-        self._description = description
-        self._due_date = due_date
-
-    @classmethod
-    def translate_trello_card_to_item(cls, trello_card):
-        """
-        Translates a Trello card to an item dictionary as per the old
-        structure.
-
-        Args:
-            trello_card (dict): The Trello card data.
-
-        Returns:
-            dict: The translated item.
-        """
-
-        # Extract required fields from the Trello card
-        title = trello_card.get('name')
-        id = trello_card.get('id')
-        id_list = trello_card.get('idList')
-        description = trello_card.get('desc')
-        due_date = trello_card.get('due')
-
-        return cls(title, id, id_list, description, due_date)
+        self._id = item_data.get('_id', None)
+        self._title = item_data.get('title')
+        self._id_list = item_data.get('id_list', "TODO_LIST")
+        self._description = item_data.get('description', None)
+        self._due_date = item_data.get('due_date', None)
 
     @property
     def id(self):
@@ -67,6 +25,11 @@ class Item:
             str: The id of the item.
         """
         return self._id
+
+    @id.setter
+    def id(self, new_id):
+        """Update the due date of the item."""
+        self._id = new_id
 
     @property
     def id_list(self):
@@ -133,10 +96,24 @@ class Item:
             str: The status of the item.
         """
         return (
-            'To Do' if self.id_list == TRELLO_TODO_LIST_ID()
-            else 'Doing' if self.id_list == TRELLO_DOING_LIST_ID()
+            'To Do' if self.id_list == "TODO_LIST"
+            else 'Doing' if self.id_list == "DOING_LIST"
             else 'Done'
         )
+
+    def to_dict(self):
+        """
+        Convert the item properties to a dictionary.
+
+        Returns:
+            dict: A dictionary representation of the item.
+        """
+        return {
+            "title": self._title,
+            "id_list": self._id_list,
+            "description": self._description,
+            "due_date": self._due_date
+        }
 
     def is_status_todo(self):
         """Check if the item is marked as "To Do".
@@ -164,15 +141,15 @@ class Item:
 
     def mark_as_to_do(self):
         """Mark the item as to do."""
-        self._id_list = TRELLO_TODO_LIST_ID()
+        self._id_list = "TODO_LIST"
 
     def mark_as_doing(self):
         """Mark the item as not started."""
-        self._id_list = TRELLO_DOING_LIST_ID()
+        self._id_list = "DOING_LIST"
 
     def mark_as_done(self):
         """Mark the item as complete."""
-        self._id_list = TRELLO_DONE_LIST_ID()
+        self._id_list = "DONE_LIST"
 
     def __str__(self):
         """Return a string representation of the item."""

@@ -13,5 +13,5 @@ ansible
 # Ignore build and configuration files
 Dockerfile
 docker-compose.yml
-.venv
+.venv/
 *.env
